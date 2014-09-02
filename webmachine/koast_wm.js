@@ -9,14 +9,14 @@ var koast = {};
 var routeMap = {};
 
 koast.methods = {
-  get: 'GET',
-  delete: 'DELETE',
-  patch: 'PATCH',
-  post: 'POST',
-  put: 'PUT'
+  GET: 'GET',
+  DELETE: 'DELETE',
+  PATCH: 'PATCH',
+  POST: 'POST',
+  PUT: 'PUT'
 };
 
-var handlers = {
+var decisions = {
   knownMethod: function(machine, req, res) {
     var knownMethods = machine.knownMethods || _.values(koast.methods);
     if(_.contains(knownMethods, req.method)) {
@@ -26,23 +26,33 @@ var handlers = {
   }
 };
 
-koast.resource = function(machine) {
+function runWebMachine(machine) {
+  return function() {
+    var req = this.req,
+        res = this.res;
 
+    // If webmachine runs successfully
+    if(decisions.knownMethod(machine, req, res)) {
+      machine.handleOk(req, res);
+    }
+  };
+}
+
+
+koast.resource = function(machine) {
   // Add current webmachine to available routes
   routeMap[machine.path] = {
-    get: function() {
-      var req = this.req,
-          res = this.res;
-
-      handlers.knownMethod(machine, req, res);
-    }
+    get: runWebMachine(machine),
+    post: runWebMachine(machine),
+    put: runWebMachine(machine),
+    delete: runWebMachine(machine)
   };
 };
 
 //***************************************************************************
 koast.resource({
   path: '/asd',
-  allowedMethods: [],
+  knownMethods: [koast.methods.GET],
   handleOk: function(req, res) {
     this.res.write('asd');
     this.res.end();
