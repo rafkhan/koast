@@ -38,7 +38,18 @@ var decisions = {
     }
 
     return false;
-  }
+  },
+
+  authorized: function(machine, req) {
+    var authFn = machine.isAuthorized;
+    if(authFn) {
+      return authFn();
+    }
+
+    return true;
+  },
+
+  forbidden: function(machine, req) {}
 };
 
 
@@ -70,6 +81,16 @@ function runWebMachine(machine) {
       return;
     }
 
+    if(decisions.authorized(machine, req)) {
+      res.writeHead(401); // 401 - Unauthorized
+      res.end();
+      return;
+    }
+
+    //
+    // TODO: 400 - Malformed?
+    // TODO: 403 - Forbidden
+
     if(req.method === koast.methods.GET) {
       machine.handleOk(req, res);
     }
@@ -81,15 +102,20 @@ function runWebMachine(machine) {
 // Resource parameters
 //
 // - path:
-//     String
-//     Path to dispatch to from flatiron router.
+//   - String
+//   - Path to dispatch to from flatiron router.
 //     i.e: "/users/:id/attr"
 //
 // - allowedMethods:
-//     Array
-//     List of HTTP methods allowed on a resource.
+//   - Array
+//   - List of HTTP methods allowed on a resource.
 //     i.e: [koast.methods.GET, 'POST', ...]
-//     
+//
+// - isAuthorized:
+//   - Function
+//   - Predicate that determines whether a request is authorized
+//     to access a specific resource
+//
 koast.resource = function(machine) {
   // Add current webmachine to available routes
   routeMap[machine.path] = {
@@ -116,9 +142,11 @@ koast.createServer = function() {
   });
 };
 
+exports = module.exports = koast;
+
+
+//
 //***************************************************************************
-//
-//
 //
 koast.resource({
   path: '/asd/:x',
@@ -132,4 +160,3 @@ koast.resource({
 var server = koast.createServer();
 server.listen('3800');
 
-exports = module.exports = koast;
