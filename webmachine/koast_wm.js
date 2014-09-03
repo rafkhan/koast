@@ -1,9 +1,8 @@
 'use strict';
 
-var http = require('http'),
-    director = require('director'),
-    _        = require('lodash');
-
+var _        = require('lodash');
+var http     = require('http');
+var director = require('director');
 
 var koast = {};
 var routeMap = {};
@@ -28,6 +27,8 @@ var decisions = {
 
 function runWebMachine(machine) {
   return function() {
+    console.log(arguments);
+
     var req = this.req,
         res = this.res;
 
@@ -42,30 +43,38 @@ function runWebMachine(machine) {
 koast.resource = function(machine) {
   // Add current webmachine to available routes
   routeMap[machine.path] = {
+    // Attach to all HTTP methods
+    // FIXME: include the rest of the methods
+    //        (except HEAD, look at Router.prototype.dispatch for rationale)
     get: runWebMachine(machine),
+    patch: runWebMachine(machine),
     post: runWebMachine(machine),
     put: runWebMachine(machine),
     delete: runWebMachine(machine)
   };
 };
 
+koast.createServer = function() {
+  var router = new director.http.Router(routeMap);
+
+  return http.createServer(function (req, res) {
+    router.dispatch(req, res, function(err) {
+      console.log(err);
+    });
+  });
+};
+
 //***************************************************************************
 koast.resource({
-  path: '/asd',
+  path: '/asd/:x',
   knownMethods: [koast.methods.GET],
   handleOk: function(req, res) {
-    this.res.write('asd');
-    this.res.end();
+    res.write('asd');
+    res.end();
   }
 });
 
-var router = new director.http.Router(routeMap);
-var server = http.createServer(function (req, res) {
-  router.dispatch(req, res, function(err) {
-    console.log(err);
-  });
-});
-
+var server = koast.createServer();
 server.listen('3800');
 
 exports = module.exports = koast;
