@@ -1,9 +1,0 @@
-{
-  "lessPaths" : [
-    "../client/app"
-  ],
-  "staticPaths" : [
-    "../client/index.html",
-    "../client/app"
-  ]
-}
