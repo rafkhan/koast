@@ -6,7 +6,15 @@ var bootstrap = require('./lib/app/bootstrap');
 var koast = {};
 
 koast.serve = function () {
-  var app = ();
+  var app = bootstrap.getConfiguredApplication({
+    routes: [
+      {
+        route: '/api',
+        type: 'module',
+        module: 'server/api'
+      }
+    ]
+  });
   app.listen(3000);
 };
 
