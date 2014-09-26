@@ -6,7 +6,8 @@
   "dependencies": {
     "chai": "~1.9.1",
     "gulp": "^3.8.8",
-    "express": "^4.9.5"
+    "express": "^4.9.5",
+    "q": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^1.9.1",
