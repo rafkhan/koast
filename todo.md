@@ -1,6 +1,6 @@
-- [ ]  Bootstrapper -> App maker becomes Boot Strapper
-  - [ ] mountApiModule/mountApiSubModule -> loop through module/routes dfined in app.json
-  - [ ] Ensure static loading still works
+- [x]  Bootstrapper -> App maker becomes Boot Strapper
+  - [x] mountApiModule/mountApiSubModule -> loop through module/routes dfined in app.json
+  - [x] Ensure static loading still works
   - [ ] Mount API -> uses the new exports of koast modules, mount with express 4 routers
   - [ ] *note: may need to keep 'mountApiSubRoute' around until Authentication refactor is done
   - [ ] Ensure 'simple case' of mongo-mapper modules/routes load - single methods
