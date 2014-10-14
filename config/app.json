@@ -6,6 +6,7 @@
     ],
     "portNumber": 8080,
 
+    // General errors?
     "errors": {
       "400": {
         "sendValue": true
@@ -15,12 +16,24 @@
       }
     }
   },
+
   "notifications": {
     "settings": {
       "timeoutInSeconds": 3600
     },
     "ios": {
       "badge": true
+    }
+  },
+
+  "mongoMapper": {
+    "errors": {
+      "400": {
+        "sendValue": true
+      },
+      "500": {
+        "sendValue": true
+      }
     }
   }
 
